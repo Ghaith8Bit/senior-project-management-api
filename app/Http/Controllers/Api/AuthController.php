@@ -16,25 +16,18 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
-            'role' => 'sometimes|in:student,supervisor,admin'
         ]);
-
-        $role = 'student';
-
-        if ($request->get('role') && auth('sanctum')->check() && auth()->user()->role === 'admin' && isset($data['role'])) {
-            $role = $data['role'];
-        }
 
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => $role,
+            'role' => 'student',
         ]);
 
         return response()->json([
             'token' => $user->createToken("api-token")->plainTextToken,
-            'role' => $user->role
+            'role' => $user->role,
         ]);
     }
 

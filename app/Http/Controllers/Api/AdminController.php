@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ProjectSuggestion;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -107,5 +108,27 @@ class AdminController extends Controller
     {
         $students = User::where('role', 'student')->get();
         return response()->json(['data' => $students]);
+    }
+
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed',
+            'role' => 'required|in:student,supervisor,admin',
+        ]);
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => $data['role'],
+        ]);
+
+        return response()->json([
+            'token' => $user->createToken("api-token")->plainTextToken,
+            'role' => $user->role,
+        ]);
     }
 }

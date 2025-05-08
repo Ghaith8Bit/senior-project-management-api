@@ -60,4 +60,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
 
     Route::get('/supervisors', [AdminController::class, 'listSupervisors']);
     Route::get('/students', [AdminController::class, 'listStudents']);
+    Route::get('/register', [AdminController::class, 'register']);
 });
